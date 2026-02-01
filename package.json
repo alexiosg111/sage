@@ -1,0 +1,16 @@
+{
+  "name": "sage-club-web",
+  "version": "1.0.0",
+  "description": "SAGE Club Berlin - Next.js + Supabase + Stripe",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "start": "pnpm --filter web start",
+    "lint": "pnpm --filter web lint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.2"
+}
