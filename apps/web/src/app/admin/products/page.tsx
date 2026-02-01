@@ -5,10 +5,19 @@ import { Plus, Package, Edit, Trash2 } from 'lucide-react';
 export default async function AdminProductsPage() {
   const supabase = createServiceClient();
   
-  const { data: products } = await supabase
+  const { data: products, error } = await supabase
     .from('products')
     .select('*')
     .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching products:', error);
+    return (
+      <div className="p-8">
+        <p className="text-red-500">Error loading products: {error.message}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
