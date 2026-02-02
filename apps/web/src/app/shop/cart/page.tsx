@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/lib/store';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Loader2 } from 'lucide-react';
 import Navigation from '@/components/Navigation';
@@ -12,7 +11,6 @@ export default function CartPage() {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [customerEmail, setCustomerEmail] = useState('');
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
-  const router = useRouter();
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,17 +49,17 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <main className="min-h-screen bg-zinc-950">
+      <main className="min-h-screen">
         <Navigation />
-        <div className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
-          <ShoppingBag className="w-16 h-16 text-zinc-600 mx-auto mb-6" />
-          <h1 className="text-2xl font-bold mb-4">Your cart is empty</h1>
-          <p className="text-zinc-400 mb-8">Looks like you haven&apos;t added anything to your cart yet.</p>
+        <div className="py-40 px-6 max-w-[1200px] mx-auto text-center">
+          <div className="mono mb-4">Your Bag</div>
+          <h1 className="text-4xl md:text-6xl font-black uppercase mb-8">Warenkorb ist leer</h1>
+          <p className="text-[#888] mb-12 max-w-md mx-auto">Du hast noch keine Artikel in deinen Warenkorb gelegt. Schau dir unsere Tickets und Merch an.</p>
           <Link
             href="/shop"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 text-zinc-950 font-semibold rounded-lg hover:bg-amber-400 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--accent)] text-black font-bold uppercase hover:bg-[var(--accent-hover)] transition-all"
           >
-            Continue Shopping
+            Zum Shop
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
@@ -70,60 +68,63 @@ export default function CartPage() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950">
+    <main className="min-h-screen pt-24">
       <Navigation />
       
-      <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+      <div className="py-12 px-6 max-w-[1200px] mx-auto">
+        <div className="mono mb-4">Checkout</div>
+        <h1 className="text-4xl md:text-6xl font-black uppercase mb-12">Warenkorb</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-2 space-y-6">
             {items.map((item) => (
               <div
                 key={item.productId}
-                className="bg-zinc-900 rounded-xl p-6 border border-zinc-800 flex items-center gap-4"
+                className="bg-[#141414] border border-[#333333] p-6 flex items-center gap-6"
               >
-                <div className="w-20 h-20 bg-zinc-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-24 h-24 bg-black border border-[#333333] flex-shrink-0 overflow-hidden">
                   {item.image_url ? (
                     <img
                       src={item.image_url}
                       alt={item.name}
-                      className="w-full h-full object-cover rounded-lg"
+                      className="w-full h-full object-cover"
                     />
                   ) : (
-                    <ShoppingBag className="w-8 h-8 text-zinc-600" />
+                    <div className="w-full h-full flex items-center justify-center">
+                        <ShoppingBag className="w-8 h-8 text-[#333]" />
+                    </div>
                   )}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold truncate">{item.name}</h3>
-                  <p className="text-amber-500">{item.price.toFixed(2)} €</p>
+                  <h3 className="text-xl font-bold uppercase truncate mb-1">{item.name}</h3>
+                  <p className="text-[var(--accent)] font-mono font-bold">{item.price.toFixed(2)} €</p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4 border border-[#333333] px-2 py-1">
                   <button
                     onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                    className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+                    className="p-2 hover:text-[var(--accent)] transition-colors"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="w-8 text-center font-semibold">{item.quantity}</span>
+                  <span className="w-6 text-center font-mono font-bold">{item.quantity}</span>
                   <button
                     onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                    className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+                    className="p-2 hover:text-[var(--accent)] transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
 
-                <div className="text-right min-w-[80px]">
-                  <p className="font-bold">{(item.price * item.quantity).toFixed(2)} €</p>
+                <div className="text-right min-w-[100px]">
+                  <p className="font-mono font-bold text-xl">{(item.price * item.quantity).toFixed(2)} €</p>
                 </div>
 
                 <button
                   onClick={() => removeItem(item.productId)}
-                  className="p-2 hover:bg-red-500/10 text-zinc-400 hover:text-red-500 rounded-lg transition-colors"
+                  className="p-2 text-[#444] hover:text-red-600 transition-colors"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
@@ -132,29 +133,29 @@ export default function CartPage() {
 
             <button
               onClick={() => clearCart()}
-              className="text-sm text-zinc-500 hover:text-red-500 transition-colors"
+              className="mono text-xs text-[#444] hover:text-red-600 transition-colors"
             >
-              Clear Cart
+              Warenkorb leeren
             </button>
           </div>
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800 sticky top-24">
-              <h2 className="text-xl font-bold mb-6">Order Summary</h2>
+            <div className="bg-[#141414] border border-[#333333] p-8 sticky top-32">
+              <h2 className="text-2xl font-black uppercase mb-8">Zusammenfassung</h2>
               
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center justify-between text-zinc-400">
-                  <span>Subtotal</span>
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center justify-between text-[#888] font-mono">
+                  <span>Zwischensumme</span>
                   <span>{getTotalPrice().toFixed(2)} €</span>
                 </div>
-                <div className="flex items-center justify-between text-zinc-400">
-                  <span>Shipping</span>
-                  <span>Calculated at checkout</span>
+                <div className="flex items-center justify-between text-[#888] font-mono">
+                  <span>Versand</span>
+                  <span>KOSTENLOS</span>
                 </div>
-                <div className="border-t border-zinc-800 pt-3 flex items-center justify-between">
-                  <span className="font-bold">Total</span>
-                  <span className="text-2xl font-bold text-amber-500">
+                <div className="border-t border-[#333333] pt-6 flex items-center justify-between">
+                  <span className="font-bold uppercase">Gesamt</span>
+                  <span className="text-3xl font-black text-[var(--accent)] font-mono">
                     {getTotalPrice().toFixed(2)} €
                   </span>
                 </div>
@@ -163,15 +164,15 @@ export default function CartPage() {
               {!showCheckoutForm ? (
                 <button
                   onClick={() => setShowCheckoutForm(true)}
-                  className="w-full py-4 bg-amber-500 text-zinc-950 font-semibold rounded-lg hover:bg-amber-400 transition-colors"
+                  className="w-full py-4 bg-[var(--accent)] text-black font-bold uppercase hover:bg-[var(--accent-hover)] transition-all"
                 >
-                  Proceed to Checkout
+                  Zur Kasse
                 </button>
               ) : (
-                <form onSubmit={handleCheckout} className="space-y-4">
+                <form onSubmit={handleCheckout} className="space-y-6">
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-zinc-400 mb-2">
-                      Email Address
+                    <label htmlFor="email" className="mono block text-xs mb-2">
+                      Email Addresse
                     </label>
                     <input
                       type="email"
@@ -179,31 +180,31 @@ export default function CartPage() {
                       required
                       value={customerEmail}
                       onChange={(e) => setCustomerEmail(e.target.value)}
-                      className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all"
-                      placeholder="your@email.com"
+                      className="w-full px-4 py-3 bg-black border border-[#333333] text-white focus:border-[var(--accent)] outline-none transition-all font-mono"
+                      placeholder="deine@email.de"
                     />
                   </div>
                   
-                  <div className="flex gap-3">
+                  <div className="flex gap-4">
                     <button
                       type="button"
                       onClick={() => setShowCheckoutForm(false)}
-                      className="flex-1 py-3 bg-zinc-800 text-white font-semibold rounded-lg hover:bg-zinc-700 transition-colors"
+                      className="flex-1 py-4 border border-[#333333] font-bold uppercase hover:bg-[#222] transition-colors"
                     >
-                      Back
+                      Zurück
                     </button>
                     <button
                       type="submit"
                       disabled={isCheckingOut}
-                      className="flex-1 py-3 bg-amber-500 text-zinc-950 font-semibold rounded-lg hover:bg-amber-400 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                      className="flex-1 py-4 bg-[var(--accent)] text-black font-bold uppercase hover:bg-[var(--accent-hover)] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       {isCheckingOut ? (
                         <>
                           <Loader2 className="w-5 h-5 animate-spin" />
-                          Processing...
+                          ...
                         </>
                       ) : (
-                        'Pay'
+                        'Bezahlen'
                       )}
                     </button>
                   </div>
@@ -212,9 +213,9 @@ export default function CartPage() {
 
               <Link
                 href="/shop"
-                className="block text-center mt-4 text-zinc-400 hover:text-white transition-colors"
+                className="block text-center mt-6 mono text-xs text-[#444] hover:text-white transition-colors"
               >
-                Continue Shopping
+                Weiter Einkaufen
               </Link>
             </div>
           </div>

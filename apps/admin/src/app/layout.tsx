@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SAGE Club Berlin",
-  description: "SAGE Club Berlin - Events, Merch & Tickets",
+  title: "SAGE Club | Admin Dashboard",
+  description: "Manage products, events and orders",
 };
 
 export default function RootLayout({
@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="de" className="scroll-smooth">
+    <html lang="de">
       <body className="antialiased">
         {children}
       </body>
