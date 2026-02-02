@@ -1,6 +1,8 @@
-import Link from 'next/link';
 import { createClient } from '@/lib/supabase';
-import { Calendar, ShoppingBag, ArrowRight } from 'lucide-react';
+import Navigation from '@/components/Navigation';
+import ShopSection from '@/components/ShopSection';
+import Link from 'next/link';
+import { UnifiedProduct } from '@/types';
 
 export default async function Home() {
   const supabase = createClient();
@@ -10,118 +12,101 @@ export default async function Home() {
     .from('events')
     .select('*')
     .eq('status', 'published')
-    .gte('date', new Date().toISOString().split('T')[0])
-    .order('date', { ascending: true })
-    .limit(3);
+    .order('date', { ascending: true });
+
+  // Fetch products
+  const { data: products } = await supabase
+    .from('products')
+    .select('*')
+    .eq('status', 'active')
+    .order('created_at', { ascending: false });
+
+  // Map to unified product format for ShopSection
+  const unifiedProducts: UnifiedProduct[] = [
+    ...(events || []).map(event => ({
+      id: event.id,
+      name: event.name,
+      price: event.ticket_price || 0,
+      image_url: event.image_url || '',
+      category: 'ticket' as const,
+      date: event.date,
+      stock: event.ticket_stock,
+      description: event.description || '',
+    })),
+    ...(products || []).map(product => ({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image_url: product.image_url || '',
+      category: 'merch' as const,
+      stock: product.stock,
+      description: product.description || '',
+    }))
+  ];
 
   return (
-    <main className="min-h-screen bg-zinc-950">
-      {/* Hero Section */}
-      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-zinc-900 to-zinc-950" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-800/20 via-zinc-950 to-zinc-950" />
-        
-        <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-          <h1 className="text-5xl sm:text-7xl font-bold tracking-tight mb-6">
-            SAGE CLUB
-            <span className="block text-amber-500">BERLIN</span>
-          </h1>
-          <p className="text-xl text-zinc-400 mb-8 max-w-2xl mx-auto">
-            Experience the finest electronic music events and exclusive merchandise in the heart of Berlin.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/events"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-amber-500 text-zinc-950 font-semibold rounded-lg hover:bg-amber-400 transition-colors"
-            >
-              <Calendar className="w-5 h-5" />
-              View Events
+    <main className="min-h-screen">
+      <Navigation />
+
+      {/* HERO SECTION */}
+      <section id="hero" className="h-[90vh] flex items-center justify-center relative overflow-hidden text-center">
+        <div className="absolute top-0 left-0 w-full h-full z-[-1] grayscale contrast-[1.2]">
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-[#0a0a0a] z-10" />
+            <img 
+                src="https://picsum.photos/seed/techno/1920/1080" 
+                alt="Club atmosphere" 
+                className="w-full h-full object-cover"
+            />
+        </div>
+        <div className="z-10 px-8 py-12 border border-white/10 bg-black/40 backdrop-blur-md max-w-4xl mx-auto">
+            <p className="mono">Berlin Institution</p>
+            <h1 className="text-[clamp(3rem,10vw,8rem)] leading-[0.9] font-black uppercase mb-4 tracking-tighter">
+                THE HEART<br />OF TECHNO
+            </h1>
+            <p className="mt-4 text-[#ddd] text-lg">Köpenicker Str. 173, Berlin</p>
+            <Link href="#shop" className="inline-block bg-[var(--accent)] text-black px-8 py-4 font-bold uppercase mt-8 hover:bg-[var(--accent-hover)] hover:scale-105 transition-all">
+                Tickets & Merch
             </Link>
-            <Link
-              href="/shop"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-zinc-800 text-white font-semibold rounded-lg hover:bg-zinc-700 transition-colors"
-            >
-              <ShoppingBag className="w-5 h-5" />
-              Visit Shop
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* Upcoming Events Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-12">
-          <h2 className="text-3xl font-bold">Upcoming Events</h2>
-          <Link href="/events" className="flex items-center gap-2 text-amber-500 hover:text-amber-400 transition-colors">
-            All Events
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
+      {/* SHOP SECTION */}
+      <ShopSection initialProducts={unifiedProducts} />
 
-        {events && events.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event) => (
-              <Link
-                key={event.id}
-                href={`/events/${event.slug}`}
-                className="group block bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 hover:border-zinc-700 transition-all"
-              >
-                <div className="aspect-video bg-zinc-800 relative overflow-hidden">
-                  {event.image_url ? (
-                    <img
-                      src={event.image_url}
-                      alt={event.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-zinc-800">
-                      <Calendar className="w-12 h-12 text-zinc-600" />
-                    </div>
-                  )}
-                </div>
-                <div className="p-6">
-                  <p className="text-amber-500 text-sm font-medium mb-2">
-                    {new Date(event.date).toLocaleDateString('de-DE', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </p>
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-amber-500 transition-colors">
-                    {event.name}
-                  </h3>
-                  {event.description && (
-                    <p className="text-zinc-400 line-clamp-2">{event.description}</p>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 bg-zinc-900/50 rounded-xl border border-zinc-800">
-            <Calendar className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
-            <p className="text-zinc-400">No upcoming events at the moment.</p>
-          </div>
-        )}
-      </section>
-
-      {/* Shop CTA Section */}
-      <section className="py-20 bg-zinc-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Official Merchandise</h2>
-          <p className="text-zinc-400 mb-8 max-w-2xl mx-auto">
-            Show your love for SAGE Club with our exclusive merchandise collection. From t-shirts to accessories.
-          </p>
-          <Link
-            href="/shop"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-amber-500 text-zinc-950 font-semibold rounded-lg hover:bg-amber-400 transition-colors"
-          >
-            Shop Now
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+      {/* ABOUT / INFO SECTION */}
+      <section id="about" className="py-24 border-b border-[#333333]">
+        <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div className="info-image">
+                <img src="https://picsum.photos/seed/clubinterior/600/400" alt="Sage Club Interior" className="w-full rounded-[4px]" />
+            </div>
+            <div className="info-text">
+                <div className="mono mb-2">Der Ort</div>
+                <h2 className="text-4xl md:text-6xl font-black uppercase mb-8 leading-tight">Industrielles Erbe</h2>
+                <p className="text-[#888] mb-6 text-lg">
+                    Der Sage Club ist einer der letzten authentischen Techno-Clubs Berlins, gelegen in einem ehemaligen Heizkraftwerk in Köpenick. Die rohe Industriearchitektur bietet den perfekten Rahmen für ungefilterte Musik- und Partyerlebnisse.
+                </p>
+                <p className="text-[#888] mb-8 text-lg">
+                    Unser Ziel war es, diese rohe Ästhetik auch digital einfangen – ohne unnötigen Schnickschnack, sondern mit Fokus auf das Wesentliche: Musik, Atmosphäre und Community.
+                </p>
+                <Link href="#" className="inline-block border-b border-[var(--accent)] pb-1 text-white hover:text-[var(--accent)] transition-colors">
+                    Kontakt & Anfahrt
+                </Link>
+            </div>
         </div>
       </section>
+
+      {/* FOOTER */}
+      <footer className="py-16 text-center">
+        <div className="max-w-[1200px] mx-auto px-6">
+            <div className="flex justify-center gap-8 mb-8">
+                <Link href="#" className="text-[#888] text-sm hover:text-white transition-colors">Impressum</Link>
+                <Link href="#" className="text-[#888] text-sm hover:text-white transition-colors">Datenschutz</Link>
+                <Link href="#" className="text-[#888] text-sm hover:text-white transition-colors">Jobs</Link>
+                <Link href="#" className="text-[#888] text-sm hover:text-white transition-colors">Presse</Link>
+            </div>
+            <p className="mono text-[#444] text-xs">© {new Date().getFullYear()} SAGE CLUB BERLIN</p>
+        </div>
+      </footer>
     </main>
   );
 }

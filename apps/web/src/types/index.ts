@@ -69,3 +69,15 @@ export interface DashboardStats {
   activeProducts: number;
   upcomingEvents: number;
 }
+
+export interface UnifiedProduct {
+  id: string;
+  name: string;
+  price: number;
+  image_url: string;
+  category: 'ticket' | 'merch';
+  description?: string;
+  date?: string;
+  lineup?: string;
+  stock?: number;
+}
