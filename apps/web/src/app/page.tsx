@@ -9,18 +9,24 @@ export default async function Home() {
   const supabase = createClient();
   
   // Fetch upcoming events
-  const { data: events } = await supabase
+  const { data: eventsData } = await supabase
     .from('events')
     .select('*')
     .eq('status', 'published')
     .order('date', { ascending: true });
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const events = eventsData as any[] | null;
 
   // Fetch products
-  const { data: products } = await supabase
+  const { data: productsData } = await supabase
     .from('products')
     .select('*')
     .eq('status', 'active')
     .order('created_at', { ascending: false });
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const products = productsData as any[] | null;
 
   // Map to unified product format for ShopSection
   const unifiedProducts: UnifiedProduct[] = [
@@ -106,6 +112,7 @@ export default async function Home() {
                 <Link href="#" className="text-[#888] text-sm hover:text-white transition-colors">Datenschutz</Link>
                 <Link href="#" className="text-[#888] text-sm hover:text-white transition-colors">Jobs</Link>
                 <Link href="#" className="text-[#888] text-sm hover:text-white transition-colors">Presse</Link>
+                <Link href="/admin" className="text-[#333] text-sm hover:text-[var(--accent)] transition-colors">Admin</Link>
             </div>
             <p className="mono text-[#444] text-xs">© {new Date().getFullYear()} SAGE CLUB BERLIN</p>
         </div>

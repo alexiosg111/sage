@@ -1,13 +1,16 @@
 import { createClient } from '@/lib/supabase';
 import Link from 'next/link';
 import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Event } from '@/types';
 
 export default async function EventsPage() {
   const supabase = createClient();
-  const { data: events } = await supabase
+  const { data } = await supabase
     .from('events')
     .select('*')
     .order('date', { ascending: true });
+  
+  const events = data as Event[] | null;
 
   return (
     <div>

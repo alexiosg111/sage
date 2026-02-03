@@ -7,18 +7,24 @@ export default async function ShopPage() {
   const supabase = createClient();
   
   // Fetch upcoming events
-  const { data: events } = await supabase
+  const { data: eventsData } = await supabase
     .from('events')
     .select('*')
     .eq('status', 'published')
     .order('date', { ascending: true });
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const events = eventsData as any[] | null;
 
   // Fetch products
-  const { data: products } = await supabase
+  const { data: productsData } = await supabase
     .from('products')
     .select('*')
     .eq('status', 'active')
     .order('created_at', { ascending: false });
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const products = productsData as any[] | null;
 
   // Map to unified product format for ShopSection
   const unifiedProducts: UnifiedProduct[] = [

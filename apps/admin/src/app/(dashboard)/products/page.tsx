@@ -2,13 +2,16 @@ import { createClient } from '@/lib/supabase';
 import Link from 'next/link';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import Image from 'next/image';
+import { Product } from '@/types';
 
 export default async function ProductsPage() {
   const supabase = createClient();
-  const { data: products } = await supabase
+  const { data } = await supabase
     .from('products')
     .select('*')
     .order('created_at', { ascending: false });
+  
+  const products = data as Product[] | null;
 
   return (
     <div>

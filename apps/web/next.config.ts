@@ -4,11 +4,13 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  typescript: {
-    ignoreBuildErrors: false,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
+  async rewrites() {
+    return [
+      {
+        source: '/admin/:path*',
+        destination: 'http://localhost:3001/admin/:path*',
+      },
+    ];
   },
 };
 

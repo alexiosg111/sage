@@ -1,12 +1,15 @@
 import { createClient } from '@/lib/supabase';
 import { ExternalLink } from 'lucide-react';
+import { Order } from '@/types';
 
 export default async function OrdersPage() {
   const supabase = createClient();
-  const { data: orders } = await supabase
+  const { data } = await supabase
     .from('orders')
     .select('*')
     .order('created_at', { ascending: false });
+  
+  const orders = data as Order[] | null;
 
   return (
     <div>

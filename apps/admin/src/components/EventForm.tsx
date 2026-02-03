@@ -27,7 +27,8 @@ interface EventFormProps {
 export default function EventForm({ initialData }: EventFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const supabase = createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createClient() as any;
 
   const {
     register,
@@ -47,17 +48,29 @@ export default function EventForm({ initialData }: EventFormProps) {
     setLoading(true);
     try {
       const slug = data.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+      const eventData = {
+        name: data.name,
+        description: data.description || null,
+        date: data.date,
+        ticket_price: data.ticket_price,
+        ticket_stock: data.ticket_stock,
+        image_url: data.image_url || null,
+        status: data.status,
+        slug,
+      };
       
       if (initialData) {
         const { error } = await supabase
           .from('events')
-          .update({ ...data, slug })
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .update(eventData as any)
           .eq('id', initialData.id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('events')
-          .insert([{ ...data, slug }]);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .insert([eventData as any]);
         if (error) throw error;
       }
 

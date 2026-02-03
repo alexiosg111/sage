@@ -7,11 +7,14 @@ import Image from 'next/image';
 export default async function EventsPage() {
   const supabase = createClient();
   
-  const { data: events } = await supabase
+  const { data } = await supabase
     .from('events')
     .select('*')
     .eq('status', 'published')
     .order('date', { ascending: true });
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const events = data as any[] | null;
 
   return (
     <main className="min-h-screen pt-20">

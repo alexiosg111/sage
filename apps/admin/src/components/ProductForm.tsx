@@ -26,7 +26,8 @@ interface ProductFormProps {
 export default function ProductForm({ initialData }: ProductFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const supabase = createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createClient() as any;
 
   const {
     register,
@@ -45,17 +46,28 @@ export default function ProductForm({ initialData }: ProductFormProps) {
     setLoading(true);
     try {
       const slug = data.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+      const productData = {
+        name: data.name,
+        description: data.description || null,
+        price: data.price,
+        stock: data.stock,
+        image_url: data.image_url || null,
+        status: data.status,
+        slug,
+      };
       
       if (initialData) {
         const { error } = await supabase
           .from('products')
-          .update({ ...data, slug })
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .update(productData as any)
           .eq('id', initialData.id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('products')
-          .insert([{ ...data, slug }]);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .insert([productData as any]);
         if (error) throw error;
       }
 
