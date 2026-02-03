@@ -78,6 +78,24 @@ Update the `.env.local` files in `apps/web` and `apps/admin` with your actual Su
 
 The website will be available at `http://localhost:3000` and the Admin Dashboard at `http://localhost:3000/admin`.
 
+## Admin Dashboard as Desktop App
+
+The Admin Dashboard can also be run as a native desktop application (Electron).
+
+1. Ensure the development server is running (`pnpm dev`).
+2. Run the following command in a new terminal:
+```bash
+pnpm --filter admin electron
+```
+
+### Building the Setup.exe
+
+To generate a standalone `setup.exe` for Windows:
+```bash
+pnpm --filter admin dist
+```
+The executable will be generated in `apps/admin/dist/`.
+
 ## Stripe Webhook Setup
 
 For local development, use the Stripe CLI:
