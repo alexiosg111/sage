@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useCartStore } from '@/lib/store';
 import { UnifiedProduct } from '@/types';
+import Image from 'next/image';
 
 interface ShopSectionProps {
   initialProducts: UnifiedProduct[];
@@ -15,7 +16,7 @@ export default function ShopSection({ initialProducts }: ShopSectionProps) {
 
   const filteredProducts = initialProducts.filter(p => filter === 'all' || p.category === filter);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: UnifiedProduct) => {
     addItem({
       productId: product.id,
       name: product.name,
@@ -75,10 +76,11 @@ export default function ShopSection({ initialProducts }: ShopSectionProps) {
               )}
               
               <div className="h-[250px] w-full overflow-hidden relative">
-                <img 
+                <Image 
                   src={product.image_url || '/placeholder.jpg'} 
                   alt={product.name} 
-                  className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${product.stock === 0 ? 'grayscale' : ''}`}
+                  fill
+                  className={`object-cover transition-transform duration-500 group-hover:scale-110 ${product.stock === 0 ? 'grayscale' : ''}`}
                 />
               </div>
               

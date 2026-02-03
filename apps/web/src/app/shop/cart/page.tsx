@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCartStore } from '@/lib/store';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Loader2 } from 'lucide-react';
 import Navigation from '@/components/Navigation';
@@ -83,12 +84,13 @@ export default function CartPage() {
                 key={item.productId}
                 className="bg-[#141414] border border-[#333333] p-6 flex items-center gap-6"
               >
-                <div className="w-24 h-24 bg-black border border-[#333333] flex-shrink-0 overflow-hidden">
+                <div className="w-24 h-24 bg-black border border-[#333333] flex-shrink-0 overflow-hidden relative">
                   {item.image_url ? (
-                    <img
+                    <Image
                       src={item.image_url}
                       alt={item.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">

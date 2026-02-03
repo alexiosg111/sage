@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase';
 import Link from 'next/link';
 import { Plus, Edit, Trash2 } from 'lucide-react';
+import Image from 'next/image';
 
 export default async function ProductsPage() {
   const supabase = createClient();
@@ -17,7 +18,7 @@ export default async function ProductsPage() {
           href="/products/new" 
           className="bg-black text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-zinc-800 transition-colors"
         >
-          <Plus className="w-5 h-5 text-[var(--primary)]" />
+          <Plus className="w-5 h-5 text-primary" />
           Produkt hinzufügen
         </Link>
       </div>
@@ -39,8 +40,8 @@ export default async function ProductsPage() {
             {products?.map((product) => (
               <tr key={product.id} className="hover:bg-zinc-50 transition-colors">
                 <td className="px-6 py-4">
-                  <div className="w-12 h-12 bg-zinc-100 rounded overflow-hidden">
-                    {product.image_url && <img src={product.image_url} alt="" className="w-full h-full object-cover" />}
+                  <div className="w-12 h-12 bg-zinc-100 rounded overflow-hidden relative">
+                    {product.image_url && <Image src={product.image_url} alt="" fill className="object-cover" />}
                   </div>
                 </td>
                 <td className="px-6 py-4 font-bold">{product.name}</td>

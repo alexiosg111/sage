@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase';
 import Navigation from '@/components/Navigation';
 import ShopSection from '@/components/ShopSection';
 import Link from 'next/link';
+import Image from 'next/image';
 import { UnifiedProduct } from '@/types';
 
 export default async function Home() {
@@ -52,10 +53,12 @@ export default async function Home() {
       <section id="hero" className="h-[90vh] flex items-center justify-center relative overflow-hidden text-center">
         <div className="absolute top-0 left-0 w-full h-full z-[-1] grayscale contrast-[1.2]">
             <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-[#0a0a0a] z-10" />
-            <img 
+            <Image 
                 src="https://picsum.photos/seed/techno/1920/1080" 
                 alt="Club atmosphere" 
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                priority
             />
         </div>
         <div className="z-10 px-8 py-12 border border-white/10 bg-black/40 backdrop-blur-md max-w-4xl mx-auto">
@@ -76,8 +79,8 @@ export default async function Home() {
       {/* ABOUT / INFO SECTION */}
       <section id="about" className="py-24 border-b border-[#333333]">
         <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            <div className="info-image">
-                <img src="https://picsum.photos/seed/clubinterior/600/400" alt="Sage Club Interior" className="w-full rounded-[4px]" />
+            <div className="info-image relative aspect-[3/2]">
+                <Image src="https://picsum.photos/seed/clubinterior/600/400" alt="Sage Club Interior" fill className="rounded-[4px] object-cover" />
             </div>
             <div className="info-text">
                 <div className="mono mb-2">Der Ort</div>
