@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import ImageUpload from '@/components/ImageUpload';
 
 interface ProductFormData {
   name: string;
@@ -22,6 +23,7 @@ export default function EditProductPage() {
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     slug: '',
@@ -89,6 +91,30 @@ export default function EditProductPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageUpload = async (file: File): Promise<string> => {
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to upload image');
+      }
+
+      const data = await response.json();
+      return data.url;
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   if (isLoading) {
@@ -193,16 +219,14 @@ export default function EditProductPage() {
           </div>
 
           <div>
-            <label htmlFor="image_url" className="block text-sm font-medium text-zinc-400 mb-2">
-              Image URL
+            <label className="block text-sm font-medium text-zinc-400 mb-2">
+              Image
             </label>
-            <input
-              type="url"
-              id="image_url"
-              name="image_url"
+            <ImageUpload
               value={formData.image_url}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all"
+              onChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+              onUpload={handleImageUpload}
+              disabled={isSubmitting || isUploading}
             />
           </div>
 

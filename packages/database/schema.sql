@@ -128,3 +128,26 @@ CREATE POLICY "Only admins can read user roles" ON user_roles
 
 CREATE POLICY "Only admins can manage user roles" ON user_roles
   FOR ALL USING (EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+
+-- Storage Bucket Setup (run these commands in Supabase SQL Editor)
+--
+-- Create storage bucket for product and event images
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('images', 'images', true);
+--
+-- Allow public access to read images
+-- CREATE POLICY "Public Read Access" ON storage.objects
+--   FOR SELECT USING (bucket_id = 'images');
+--
+-- Allow authenticated users to upload images
+-- CREATE POLICY "Authenticated Upload" ON storage.objects
+--   FOR INSERT WITH CHECK (
+--     bucket_id = 'images' AND
+--     auth.role() = 'authenticated'
+--   );
+--
+-- Allow admins to delete images
+-- CREATE POLICY "Admin Delete" ON storage.objects
+--   FOR DELETE USING (
+--     bucket_id = 'images' AND
+--     EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role = 'admin')
+--   );
