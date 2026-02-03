@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { LayoutDashboard, Package, Calendar, ShoppingBag, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, Calendar, ShoppingBag, LogOut, BarChart3, User } from 'lucide-react';
 
 export default function AdminLayout({
   children,
@@ -25,6 +25,13 @@ export default function AdminLayout({
             Dashboard
           </Link>
           <Link
+            href="/admin/analytics"
+            className="flex items-center gap-3 px-4 py-3 text-zinc-300 hover:bg-zinc-800 rounded-lg transition-colors"
+          >
+            <BarChart3 className="w-5 h-5" />
+            Analytics
+          </Link>
+          <Link
             href="/admin/products"
             className="flex items-center gap-3 px-4 py-3 text-zinc-300 hover:bg-zinc-800 rounded-lg transition-colors"
           >
@@ -47,14 +54,24 @@ export default function AdminLayout({
           </Link>
         </nav>
 
-        <div className="p-4 border-t border-zinc-800">
+        <div className="p-4 border-t border-zinc-800 space-y-2">
           <Link
             href="/"
+            target="_blank"
             className="flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white transition-colors"
           >
-            <LogOut className="w-5 h-5" />
-            Back to Site
+            <User className="w-5 h-5" />
+            View Site
           </Link>
+          <form action="/api/admin/logout" method="POST">
+            <button
+              type="submit"
+              className="flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-red-500 transition-colors w-full text-left"
+            >
+              <LogOut className="w-5 h-5" />
+              Logout
+            </button>
+          </form>
         </div>
       </aside>
 
