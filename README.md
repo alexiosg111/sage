@@ -90,11 +90,21 @@ pnpm --filter admin electron
 
 ### Building the Setup.exe
 
-To generate a standalone `setup.exe` for Windows:
+To generate a standalone `setup.exe` for Windows locally:
 ```bash
 pnpm --filter admin dist
 ```
 The executable will be generated in `apps/admin/dist/`.
+
+### Automated Release
+
+A GitHub Action is configured to automatically create a release and build the `setup.exe` whenever a tag starting with `v` is pushed:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+The release will appear on your GitHub repository's "Releases" page with the `setup.exe` attached.
 
 ## Stripe Webhook Setup
 
