@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase';
 import { Calendar, MapPin, Ticket, ArrowLeft } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import BuyTicketButton from '@/components/BuyTicketButton';
+import Image from 'next/image';
 
 interface Event {
   id: string;
@@ -48,10 +49,10 @@ export default function EventPage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-zinc-950">
+      <main className="min-h-screen">
         <Navigation />
-        <div className="py-20 px-4 text-center">
-          <p className="text-zinc-400">Loading...</p>
+        <div className="py-40 px-6 text-center">
+          <p className="mono animate-pulse">Lade Event...</p>
         </div>
       </main>
     );
@@ -59,12 +60,13 @@ export default function EventPage() {
 
   if (!event) {
     return (
-      <main className="min-h-screen bg-zinc-950">
+      <main className="min-h-screen">
         <Navigation />
-        <div className="py-20 px-4 text-center">
-          <p className="text-zinc-400">Event not found</p>
-          <Link href="/events" className="text-amber-500 hover:underline mt-4 inline-block">
-            Back to Events
+        <div className="py-40 px-6 text-center">
+          <div className="mono mb-4 text-red-500">404</div>
+          <h1 className="text-4xl font-black uppercase mb-8">Event nicht gefunden</h1>
+          <Link href="/events" className="inline-block border-b border-[var(--accent)] text-white hover:text-[var(--accent)] transition-colors">
+            Zurück zum Programm
           </Link>
         </div>
       </main>
@@ -76,39 +78,40 @@ export default function EventPage() {
   const hasTickets = event.ticket_stock > 0;
 
   return (
-    <main className="min-h-screen bg-zinc-950">
+    <main className="min-h-screen pt-20">
       <Navigation />
       
-      <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="py-12 px-6 max-w-[1200px] mx-auto">
         <Link
           href="/events"
-          className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-8"
+          className="inline-flex items-center gap-2 mono text-xs text-[#888] hover:text-white transition-colors mb-12"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Events
+          ZURÜCK ZUM PROGRAMM
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Image */}
-          <div className="aspect-square bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800">
+          <div className="aspect-square bg-black border border-[#333333] relative overflow-hidden">
             {event.image_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={event.image_url}
                 alt={event.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                priority
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-zinc-800">
-                <Calendar className="w-24 h-24 text-zinc-600" />
+              <div className="w-full h-full flex items-center justify-center">
+                <Calendar className="w-24 h-24 text-[#333]" />
               </div>
             )}
           </div>
 
           {/* Details */}
           <div className="flex flex-col">
-            <div className="flex-1">
-              <p className="text-amber-500 font-medium mb-4">
+            <div className="mb-12">
+              <p className="mono text-[var(--accent)] mb-4">
                 {eventDate.toLocaleDateString('de-DE', {
                   weekday: 'long',
                   year: 'numeric',
@@ -117,34 +120,36 @@ export default function EventPage() {
                 })}
               </p>
               
-              <h1 className="text-4xl font-bold mb-6">{event.name}</h1>
+              <h1 className="text-4xl md:text-6xl font-black uppercase mb-8 tracking-tighter leading-tight">{event.name}</h1>
               
-              <div className="flex items-center gap-2 text-zinc-400 mb-6">
-                <MapPin className="w-5 h-5" />
-                <span>SAGE Club Berlin</span>
+              <div className="flex items-center gap-2 text-[#888] mono text-sm mb-8">
+                <MapPin className="w-4 h-4 text-[var(--accent)]" />
+                <span>SAGE CLUB BERLIN | KÖPENICKER STR. 173</span>
               </div>
 
               {event.description && (
-                <div className="prose prose-invert max-w-none mb-8">
-                  <p className="text-zinc-300 leading-relaxed">{event.description}</p>
+                <div className="border-t border-[#333333] pt-8">
+                  <p className="text-[#888] leading-relaxed text-lg whitespace-pre-wrap">{event.description}</p>
                 </div>
               )}
             </div>
 
             {/* Ticket Section */}
             {event.ticket_price && isUpcoming && (
-              <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <Ticket className="w-6 h-6 text-amber-500" />
+              <div className="bg-[#141414] border border-[#333333] p-8">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[var(--accent)]/10 flex items-center justify-center">
+                        <Ticket className="w-6 h-6 text-[var(--accent)]" />
+                    </div>
                     <div>
-                      <p className="font-semibold">Standard Ticket</p>
-                      <p className="text-sm text-zinc-400">
-                        {hasTickets ? `${event.ticket_stock} tickets available` : 'Sold out'}
+                      <p className="font-bold uppercase">Standard Ticket</p>
+                      <p className="mono text-xs text-[#555]">
+                        {hasTickets ? `${event.ticket_stock} TICKETS VERFÜGBAR` : 'AUSVERKAUFT'}
                       </p>
                     </div>
                   </div>
-                  <p className="text-2xl font-bold">{event.ticket_price.toFixed(2)} €</p>
+                  <p className="text-3xl font-black font-mono text-[var(--accent)]">{event.ticket_price.toFixed(2)} €</p>
                 </div>
                 
                 {hasTickets ? (
@@ -156,7 +161,7 @@ export default function EventPage() {
                 ) : (
                   <button
                     disabled
-                    className="w-full py-3 bg-zinc-800 text-zinc-500 font-semibold rounded-lg cursor-not-allowed"
+                    className="w-full py-4 border border-[#333333] text-[#444] font-bold uppercase cursor-not-allowed"
                   >
                     Sold Out
                   </button>

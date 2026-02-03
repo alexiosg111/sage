@@ -7,6 +7,7 @@ import { useCartStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase';
 import { Package, ArrowLeft, Minus, Plus, ShoppingCart, Check } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import Image from 'next/image';
 
 interface Product {
   id: string;
@@ -51,10 +52,10 @@ export default function ProductPage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-zinc-950">
+      <main className="min-h-screen">
         <Navigation />
-        <div className="py-20 px-4 text-center">
-          <p className="text-zinc-400">Loading...</p>
+        <div className="py-40 px-6 text-center">
+          <p className="mono animate-pulse">Lade Produkt...</p>
         </div>
       </main>
     );
@@ -62,12 +63,13 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <main className="min-h-screen bg-zinc-950">
+      <main className="min-h-screen">
         <Navigation />
-        <div className="py-20 px-4 text-center">
-          <p className="text-zinc-400">Product not found</p>
-          <Link href="/shop" className="text-amber-500 hover:underline mt-4 inline-block">
-            Back to Shop
+        <div className="py-40 px-6 text-center">
+          <div className="mono mb-4 text-red-500">404</div>
+          <h1 className="text-4xl font-black uppercase mb-8">Produkt nicht gefunden</h1>
+          <Link href="/shop" className="inline-block border-b border-[var(--accent)] text-white hover:text-[var(--accent)] transition-colors">
+            Zurück zum Shop
           </Link>
         </div>
       </main>
@@ -105,113 +107,130 @@ export default function ProductPage() {
   const isLowStock = product.stock <= 5 && product.stock > 0;
 
   return (
-    <main className="min-h-screen bg-zinc-950">
+    <main className="min-h-screen pt-20">
       <Navigation />
       
-      <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="py-12 px-6 max-w-[1200px] mx-auto">
         <button
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-8"
+          className="inline-flex items-center gap-2 mono text-xs text-[#888] hover:text-white transition-colors mb-12"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Shop
+          ZURÜCK ZUM SHOP
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Image */}
-          <div className="aspect-square bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800">
+          <div className="aspect-square bg-black border border-[#333333] relative overflow-hidden">
             {product.image_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={product.image_url}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                priority
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-zinc-800">
-                <Package className="w-24 h-24 text-zinc-600" />
+              <div className="w-full h-full flex items-center justify-center">
+                <Package className="w-24 h-24 text-[#333]" />
               </div>
             )}
           </div>
 
           {/* Details */}
           <div className="flex flex-col">
-            <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-            <p className="text-3xl font-bold text-amber-500 mb-6">
-              {product.price.toFixed(2)} €
-            </p>
-            
-            {product.description && (
-              <p className="text-zinc-300 mb-8 leading-relaxed">{product.description}</p>
-            )}
-
-            {/* Stock Status */}
-            <div className="mb-6">
-              {isOutOfStock ? (
-                <span className="text-red-500 font-medium">Out of Stock</span>
-              ) : isLowStock ? (
-                <span className="text-amber-500 font-medium">Only {product.stock} left in stock</span>
-              ) : (
-                <span className="text-green-500 font-medium">In Stock</span>
+            <div className="mb-12">
+              <div className="mono text-[var(--accent)] mb-4">Official Merchandise</div>
+              <h1 className="text-4xl md:text-6xl font-black uppercase mb-6 tracking-tighter leading-tight">{product.name}</h1>
+              <p className="text-3xl font-black font-mono text-[var(--accent)] mb-8">
+                {product.price.toFixed(2)} €
+              </p>
+              
+              {product.description && (
+                <div className="border-t border-[#333333] pt-8">
+                  <p className="text-[#888] leading-relaxed text-lg whitespace-pre-wrap">{product.description}</p>
+                </div>
               )}
             </div>
 
-            {/* Quantity Selector */}
-            {!isOutOfStock && (
-              <div className="flex items-center gap-4 mb-6">
-                <span className="text-sm font-medium text-zinc-400">Quantity</span>
-                <div className="flex items-center bg-zinc-900 rounded-lg border border-zinc-800">
-                  <button
-                    onClick={decrementQuantity}
-                    disabled={quantity <= 1}
-                    className="p-3 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="w-12 text-center font-semibold">{quantity}</span>
-                  <button
-                    onClick={incrementQuantity}
-                    disabled={quantity >= product.stock}
-                    className="p-3 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="flex gap-4">
-              <button
-                onClick={handleAddToCart}
-                disabled={isOutOfStock || isAdded}
-                className={`flex-1 py-4 font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 ${
-                  isAdded
-                    ? 'bg-green-500 text-white'
-                    : isOutOfStock
-                    ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                    : 'bg-amber-500 text-zinc-950 hover:bg-amber-400'
-                }`}
-              >
-                {isAdded ? (
-                  <>
-                    <Check className="w-5 h-5" />
-                    Added to Cart
-                  </>
+            {/* Stock & Quantity */}
+            <div className="bg-[#141414] border border-[#333333] p-8">
+              {/* Stock Status */}
+              <div className="mb-8 flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${isOutOfStock ? 'bg-red-500' : 'bg-[var(--accent)]'}`} />
+                {isOutOfStock ? (
+                  <span className="mono text-xs text-red-500">AUSVERKAUFT</span>
+                ) : isLowStock ? (
+                  <span className="mono text-xs text-[var(--accent)]">NUR NOCH {product.stock} VERFÜGBAR</span>
                 ) : (
-                  <>
-                    <ShoppingCart className="w-5 h-5" />
-                    Add to Cart
-                  </>
+                  <span className="mono text-xs text-[var(--accent)]">AUF LAGER</span>
                 )}
-              </button>
-              
-              <Link
-                href="/shop/cart"
-                className="px-6 py-4 bg-zinc-800 text-white font-semibold rounded-lg hover:bg-zinc-700 transition-colors"
-              >
-                View Cart
-              </Link>
+              </div>
+
+              {!isOutOfStock && (
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center justify-between">
+                    <span className="mono text-xs text-[#888]">ANZAHL</span>
+                    <div className="flex items-center border border-[#333333]">
+                      <button
+                        onClick={decrementQuantity}
+                        disabled={quantity <= 1}
+                        className="p-4 hover:text-[var(--accent)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="w-12 text-center font-mono font-bold text-xl">{quantity}</span>
+                      <button
+                        onClick={incrementQuantity}
+                        disabled={quantity >= product.stock}
+                        className="p-4 hover:text-[var(--accent)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={isOutOfStock || isAdded}
+                      className={`flex-1 py-5 font-bold uppercase transition-all flex items-center justify-center gap-3 ${
+                        isAdded
+                          ? 'bg-green-600 text-white'
+                          : 'bg-[var(--accent)] text-black hover:bg-[var(--accent-hover)]'
+                      }`}
+                    >
+                      {isAdded ? (
+                        <>
+                          <Check className="w-5 h-5" />
+                          Hinzugefügt
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingCart className="w-5 h-5" />
+                          In den Warenkorb
+                        </>
+                      )}
+                    </button>
+                    
+                    <Link
+                      href="/shop/cart"
+                      className="px-8 py-5 border border-white text-white font-bold uppercase hover:bg-white hover:text-black transition-all"
+                    >
+                      Warenkorb
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+              {isOutOfStock && (
+                <button
+                  disabled
+                  className="w-full py-5 border border-[#333333] text-[#444] font-bold uppercase cursor-not-allowed"
+                >
+                  Sold Out
+                </button>
+              )}
             </div>
           </div>
         </div>

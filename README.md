@@ -4,17 +4,19 @@ A modern e-commerce and event management platform for SAGE Club Berlin, built wi
 
 ## Features
 
-- **Public Website**
+- **Public Website** (`apps/web`)
   - Event listings with ticket purchasing
   - Merchandise shop with cart functionality
   - Club information page
-  - Responsive dark-themed design
+  - Responsive dark-themed design ("Industrial Brutalism")
+  - Automatic proxy to Admin Dashboard at `/admin`
 
-- **Admin Dashboard**
-  - Product management (CRUD)
-  - Event management (CRUD)
-  - Order tracking and management
-  - Sales analytics
+- **Admin Dashboard** (`apps/admin`)
+  - Product management (CRUD) with image previews
+  - Event management (CRUD) with ticket tracking
+  - Detailed Order tracking and customer management
+  - Sales analytics and revenue overview
+  - Clean, professional industrial UI
 
 - **E-commerce**
   - Shopping cart with persistent storage
@@ -24,8 +26,8 @@ A modern e-commerce and event management platform for SAGE Club Berlin, built wi
 
 ## Tech Stack
 
-- **Frontend**: Next.js 15, TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes
+- **Frontend**: Next.js 16, TypeScript, Tailwind CSS 4
+- **Backend**: Next.js API Routes (Server Components)
 - **Database**: Supabase (PostgreSQL)
 - **Payments**: Stripe
 - **State Management**: Zustand
@@ -35,20 +37,12 @@ A modern e-commerce and event management platform for SAGE Club Berlin, built wi
 
 ```
 sage-club-web/
-├── apps/web/              # Next.js application
-│   ├── src/app/           # App Router pages
-│   │   ├── admin/         # Admin dashboard
-│   │   ├── api/           # API routes
-│   │   ├── checkout/      # Checkout success/cancel pages
-│   │   ├── club/          # Club info page
-│   │   ├── events/        # Event listings
-│   │   ├── shop/          # Shop pages
-│   │   └── page.tsx       # Home page
-│   ├── src/components/    # React components
-│   ├── src/lib/           # Utility functions & clients
-│   ├── src/types/         # TypeScript types
-│   └── .env.local.example # Environment variables template
-├── packages/database/     # Database schema
+├── apps/
+│   ├── web/               # Main website (Consumer facing)
+│   └── admin/             # Admin dashboard (Internal use)
+├── packages/
+│   └── database/          # Database schema and SQL
+├── package.json           # Workspace configuration
 └── README.md
 ```
 
@@ -56,8 +50,8 @@ sage-club-web/
 
 ### Prerequisites
 
-- Node.js 18+
-- pnpm
+- Node.js 20+
+- [pnpm](https://pnpm.io/installation)
 - Supabase account
 - Stripe account
 
@@ -69,77 +63,66 @@ git clone https://github.com/alexiosg111/sage-club-web.git
 cd sage-club-web
 ```
 
-2. Install dependencies:
+2. Run the setup script:
+   - **Windows:** Double-click `setup.bat`.
+   - **Linux/macOS:** Run `chmod +x setup.sh && ./setup.sh`
+
+This script will check for prerequisites (Node.js, pnpm), install dependencies, and create your environment files.
+
+3. Set up your credentials:
+Update the `.env.local` files in `apps/web` and `apps/admin` with your actual Supabase and Stripe credentials.
+
+4. Run the development server:
+   - **Windows:** Double-click `start.bat`.
+   - **Linux/macOS:** Run `chmod +x start.sh && ./start.sh`
+
+The website will be available at `http://localhost:3000` and the Admin Dashboard at `http://localhost:3000/admin`.
+
+## Admin Dashboard as Desktop App
+
+The Admin Dashboard can also be run as a native desktop application (Electron).
+
+1. Ensure the development server is running (`pnpm dev`).
+2. Run the following command in a new terminal:
 ```bash
-pnpm install
+pnpm --filter admin electron
 ```
 
-3. Set up environment variables:
+### Building the Setup.exe
+
+To generate a standalone `setup.exe` for Windows locally:
 ```bash
-cp apps/web/.env.local.example apps/web/.env.local
-# Edit .env.local with your credentials
+pnpm --filter admin dist
 ```
+The executable will be generated in `apps/admin/dist/`.
 
-4. Set up the database:
-   - Create a new Supabase project
-   - Run the SQL schema from `packages/database/schema.sql`
+### Automated Release
 
-5. Run the development server:
+A GitHub Action is configured to automatically create a release and build the `setup.exe` whenever a tag starting with `v` is pushed:
+
 ```bash
-pnpm dev
+git tag v1.0.0
+git push origin v1.0.0
 ```
+The release will appear on your GitHub repository's "Releases" page with the `setup.exe` attached.
 
-### Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key |
-| `STRIPE_SECRET_KEY` | Stripe secret key |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret |
-| `NEXT_PUBLIC_SITE_URL` | Your site URL |
-
-### Stripe Webhook Setup
+## Stripe Webhook Setup
 
 For local development, use the Stripe CLI:
 
 ```bash
 stripe listen --forward-to localhost:3000/api/webhooks/stripe
 ```
-
-## Database Schema
-
-### Tables
-
-- **products**: Store merchandise
-- **events**: Store club events
-- **orders**: Store customer orders
-- **order_items**: Store order line items
-- **user_roles**: Store admin user roles
+Copy the provided webhook secret to your `apps/web/.env.local` as `STRIPE_WEBHOOK_SECRET`.
 
 ## Deployment
 
-### Vercel (Recommended)
+The project is optimized for **Vercel**. 
 
-1. Push your code to GitHub
-2. Import the project in Vercel
-3. Add environment variables
-4. Deploy!
-
-### Supabase
-
-- Enable Row Level Security (RLS)
-- Configure authentication if needed
-- Set up database policies
-
-## Scripts
-
-- `pnpm dev` - Start development server
-- `pnpm build` - Build for production
-- `pnpm start` - Start production server
-- `pnpm lint` - Run ESLint
+1. Push your code to GitHub.
+2. Import the project in Vercel.
+3. Vercel will automatically detect the monorepo structure. Configure `apps/web` and `apps/admin` accordingly if deploying separately, or deploy `apps/web` and let it handle the admin via rewrites (standard configuration).
+4. Add all environment variables in the Vercel dashboard.
 
 ## License
 

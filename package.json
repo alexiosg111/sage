@@ -4,10 +4,11 @@
   "description": "SAGE Club Berlin - Next.js + Supabase + Stripe",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter web dev",
-    "build": "pnpm --filter web build",
-    "start": "pnpm --filter web start",
-    "lint": "pnpm --filter web lint"
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "start": "pnpm -r start",
+    "lint": "pnpm -r lint",
+    "build-app": "pnpm --filter admin dist"
   },
   "keywords": [],
   "author": "",

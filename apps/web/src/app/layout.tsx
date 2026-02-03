@@ -1,11 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
 
 export const metadata: Metadata = {
   title: "SAGE Club Berlin",
@@ -18,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="de">
-      <body className={`${inter.variable} font-sans antialiased bg-zinc-950 text-white`}>
+    <html lang="de" className="scroll-smooth">
+      <body className="antialiased">
         {children}
       </body>
     </html>

@@ -1,50 +1,53 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase';
-import { Calendar } from 'lucide-react';
+import { Calendar, ArrowRight } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import Image from 'next/image';
 
 export default async function EventsPage() {
   const supabase = createClient();
   
-  const { data: events } = await supabase
+  const { data } = await supabase
     .from('events')
     .select('*')
     .eq('status', 'published')
     .order('date', { ascending: true });
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const events = data as any[] | null;
 
   return (
-    <main className="min-h-screen bg-zinc-950">
+    <main className="min-h-screen pt-20">
       <Navigation />
       
-      <div className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold mb-4">Events</h1>
-        <p className="text-zinc-400 mb-12 max-w-2xl">
-          Discover our upcoming events and get your tickets for unforgettable nights at SAGE Club Berlin.
-        </p>
-
+      <div className="py-24 px-6 max-w-[1200px] mx-auto">
+        <div className="mono mb-4">Programm</div>
+        <h1 className="text-4xl md:text-6xl font-black uppercase mb-12 tracking-tighter">Nächste Events</h1>
+        
         {events && events.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {events.map((event) => (
               <Link
                 key={event.id}
                 href={`/events/${event.slug}`}
-                className="group block bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 hover:border-zinc-700 transition-all"
+                className="group block bg-[#141414] border border-[#333333] hover:border-[var(--accent)] transition-all h-full flex flex-col"
               >
-                <div className="aspect-video bg-zinc-800 relative overflow-hidden">
+                <div className="aspect-video bg-black relative overflow-hidden">
                   {event.image_url ? (
-                    <img
+                    <Image
                       src={event.image_url}
                       alt={event.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-zinc-800">
-                      <Calendar className="w-12 h-12 text-zinc-600" />
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Calendar className="w-12 h-12 text-[#333]" />
                     </div>
                   )}
                 </div>
-                <div className="p-6">
-                  <p className="text-amber-500 text-sm font-medium mb-2">
+                <div className="p-8 flex-grow flex flex-col">
+                  <p className="mono text-xs mb-4">
                     {new Date(event.date).toLocaleDateString('de-DE', {
                       weekday: 'long',
                       year: 'numeric',
@@ -52,26 +55,31 @@ export default async function EventsPage() {
                       day: 'numeric',
                     })}
                   </p>
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-amber-500 transition-colors">
+                  <h3 className="text-2xl font-bold uppercase mb-4 leading-tight group-hover:text-[var(--accent)] transition-colors">
                     {event.name}
                   </h3>
                   {event.description && (
-                    <p className="text-zinc-400 line-clamp-2">{event.description}</p>
+                    <p className="text-[#888] line-clamp-2 mb-6 text-sm">{event.description}</p>
                   )}
-                  {event.ticket_price && (
-                    <p className="mt-4 text-lg font-semibold">
-                      From {event.ticket_price.toFixed(2)} €
-                    </p>
-                  )}
+                  <div className="mt-auto flex items-center justify-between">
+                    {event.ticket_price && (
+                      <p className="font-mono font-bold text-lg text-[var(--accent)]">
+                        {event.ticket_price.toFixed(2)} €
+                      </p>
+                    )}
+                    <div className="flex items-center gap-2 uppercase text-xs font-bold tracking-widest group-hover:translate-x-2 transition-transform">
+                      Details <ArrowRight className="w-4 h-4" />
+                    </div>
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 bg-zinc-900/50 rounded-xl border border-zinc-800">
-            <Calendar className="w-16 h-16 text-zinc-600 mx-auto mb-4" />
-            <p className="text-zinc-400 text-lg">No events scheduled at the moment.</p>
-            <p className="text-zinc-500 mt-2">Check back soon for upcoming events!</p>
+          <div className="text-center py-40 border border-[#333333] bg-[#141414]">
+            <Calendar className="w-16 h-16 text-[#333] mx-auto mb-6" />
+            <p className="text-[#888] text-lg mb-2 uppercase font-black">Keine Events geplant</p>
+            <p className="text-[#444] text-sm">Schau bald wieder vorbei für neue Termine.</p>
           </div>
         )}
       </div>

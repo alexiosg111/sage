@@ -19,10 +19,13 @@ export async function POST(request: NextRequest) {
 
     // Fetch products from database to verify prices
     const productIds = items.map(item => item.productId);
-    const { data: products, error: productsError } = await supabase
+    const { data, error: productsError } = await supabase
       .from('products')
       .select('*')
       .in('id', productIds);
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const products = data as any[] | null;
 
     if (productsError) {
       console.error('Error fetching products:', productsError);
@@ -39,10 +42,13 @@ export async function POST(request: NextRequest) {
 
     let events: { id: string; name: string; ticket_price: number }[] = [];
     if (eventIds.length > 0) {
-      const { data: eventsData, error: eventsError } = await supabase
+      const { data, error: eventsError } = await supabase
         .from('events')
         .select('id, name, ticket_price')
         .in('id', eventIds);
+      
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const eventsData = data as any[] | null;
 
       if (eventsError) {
         console.error('Error fetching events:', eventsError);
@@ -109,8 +115,9 @@ export async function POST(request: NextRequest) {
     }, 0);
 
     // Create order in database
-    const { data: order, error: orderError } = await supabase
-      .from('orders')
+    const { data: order, error: orderError } = await (supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .from('orders') as any)
       .insert({
         status: 'pending',
         total,
@@ -141,8 +148,9 @@ export async function POST(request: NextRequest) {
     });
 
     // Update order with Stripe session ID
-    await supabase
-      .from('orders')
+    await (supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .from('orders') as any)
       .update({ stripe_session_id: session.id })
       .eq('id', order.id);
 
@@ -167,7 +175,8 @@ export async function POST(request: NextRequest) {
       };
     });
 
-    await supabase.from('order_items').insert(orderItems);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase.from('order_items') as any).insert(orderItems);
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
