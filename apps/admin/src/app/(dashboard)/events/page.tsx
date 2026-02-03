@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase';
 import Link from 'next/link';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit } from 'lucide-react';
 import { Event } from '@/types';
+import DeleteButton from '@/components/DeleteButton';
 
 export default async function EventsPage() {
   const supabase = createClient();
@@ -55,12 +56,14 @@ export default async function EventsPage() {
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex justify-end gap-2">
-                    <button className="p-2 text-zinc-400 hover:text-blue-600 transition-colors">
+                    <Link 
+                      href={`/events/${event.id}`}
+                      className="p-2 text-zinc-400 hover:text-blue-600 transition-colors"
+                      title="Bearbeiten"
+                    >
                       <Edit className="w-5 h-5" />
-                    </button>
-                    <button className="p-2 text-zinc-400 hover:text-red-600 transition-colors">
-                      <Trash2 className="w-5 h-5" />
-                    </button>
+                    </Link>
+                    <DeleteButton id={event.id} table="events" name={event.name} />
                   </div>
                 </td>
               </tr>

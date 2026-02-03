@@ -1,8 +1,9 @@
 import { createClient } from '@/lib/supabase';
 import Link from 'next/link';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit } from 'lucide-react';
 import Image from 'next/image';
 import { Product } from '@/types';
+import DeleteButton from '@/components/DeleteButton';
 
 export default async function ProductsPage() {
   const supabase = createClient();
@@ -60,12 +61,14 @@ export default async function ProductsPage() {
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex justify-end gap-2">
-                    <button className="p-2 text-zinc-400 hover:text-blue-600 transition-colors">
+                    <Link 
+                      href={`/products/${product.id}`}
+                      className="p-2 text-zinc-400 hover:text-blue-600 transition-colors"
+                      title="Bearbeiten"
+                    >
                       <Edit className="w-5 h-5" />
-                    </button>
-                    <button className="p-2 text-zinc-400 hover:text-red-600 transition-colors">
-                      <Trash2 className="w-5 h-5" />
-                    </button>
+                    </Link>
+                    <DeleteButton id={product.id} table="products" name={product.name} />
                   </div>
                 </td>
               </tr>

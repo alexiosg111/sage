@@ -6,12 +6,14 @@ export default async function AdminDashboard() {
 
   // In a real app we'd fetch actual data here
   // For now let's show some mock or initial stats
-  const { data: products } = await supabase.from('products').select('id', { count: 'exact' });
-  const { data: events } = await supabase.from('events').select('id', { count: 'exact' });
-  const { data: orders } = await supabase.from('orders').select('id, total', { count: 'exact' });
+  const { data: products } = await supabase.from('products').select('id');
+  const { data: events } = await supabase.from('events').select('id');
+  const { data: orders } = await supabase.from('orders').select('id, total').eq('status', 'completed');
+
+  const totalRevenue = orders?.reduce((acc, order) => acc + (order.total || 0), 0) || 0;
 
   const stats = [
-    { label: 'Gesamtumsatz', value: '0,00 €', icon: TrendingUp, color: 'text-green-600' },
+    { label: 'Gesamtumsatz', value: `${totalRevenue.toFixed(2)} €`, icon: TrendingUp, color: 'text-green-600' },
     { label: 'Bestellungen', value: orders?.length.toString() || '0', icon: ShoppingBag, color: 'text-blue-600' },
     { label: 'Produkte', value: products?.length.toString() || '0', icon: Package, color: 'text-amber-600' },
     { label: 'Events', value: events?.length.toString() || '0', icon: Calendar, color: 'text-purple-600' },

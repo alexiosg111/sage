@@ -33,6 +33,7 @@ export default function EventForm({ initialData }: EventFormProps) {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
@@ -43,6 +44,8 @@ export default function EventForm({ initialData }: EventFormProps) {
       date: new Date().toISOString().slice(0, 16),
     },
   });
+
+  const imageUrl = watch('image_url');
 
   const onSubmit = async (data: EventFormValues) => {
     setLoading(true);
@@ -140,11 +143,19 @@ export default function EventForm({ initialData }: EventFormProps) {
 
       <div>
         <label className="block text-sm font-bold uppercase mb-2">Flyer/Bild URL</label>
-        <input
-          {...register('image_url')}
-          className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg focus:border-primary outline-none transition-all"
-          placeholder="https://..."
-        />
+        <div className="flex gap-4">
+          <input
+            {...register('image_url')}
+            className="flex-1 px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg focus:border-primary outline-none transition-all"
+            placeholder="https://..."
+          />
+          {imageUrl && (
+            <div className="w-12 h-12 relative border border-zinc-200 rounded overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+            </div>
+          )}
+        </div>
         {errors.image_url && <p className="text-red-500 text-xs mt-1">{errors.image_url.message}</p>}
       </div>
 

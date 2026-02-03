@@ -31,7 +31,7 @@ export default async function Home() {
   // Map to unified product format for ShopSection
   const unifiedProducts: UnifiedProduct[] = [
     ...(events || []).map(event => ({
-      id: event.id,
+      id: `ticket-${event.id}`,
       name: event.name,
       price: event.ticket_price || 0,
       image_url: event.image_url || '',

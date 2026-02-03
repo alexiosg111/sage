@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase';
 import { ExternalLink } from 'lucide-react';
 import { Order } from '@/types';
+import Link from 'next/link';
 
 export default async function OrdersPage() {
   const supabase = createClient();
@@ -50,9 +51,13 @@ export default async function OrdersPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <button className="p-2 text-zinc-400 hover:text-black transition-colors">
+                  <Link 
+                    href={`/orders/${order.id}`}
+                    className="p-2 text-zinc-400 hover:text-black transition-colors inline-block"
+                    title="Details ansehen"
+                  >
                     <ExternalLink className="w-5 h-5" />
-                  </button>
+                  </Link>
                 </td>
               </tr>
             ))}
