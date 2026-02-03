@@ -63,41 +63,19 @@ git clone https://github.com/alexiosg111/sage-club-web.git
 cd sage-club-web
 ```
 
-2. Install dependencies:
-```bash
-pnpm install
-```
+2. Run the setup script:
+   - **Windows:** Double-click `setup.bat`.
+   - **Linux/macOS:** Run `chmod +x setup.sh && ./setup.sh`
 
-3. Set up environment variables:
-Create a `.env.local` file in both `apps/web` and `apps/admin`. Use the following templates:
+This script will check for prerequisites (Node.js, pnpm), install dependencies, and create your environment files.
 
-**apps/web/.env.local:**
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-STRIPE_SECRET_KEY=your_stripe_secret_key
-STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-```
+3. Set up your credentials:
+Update the `.env.local` files in `apps/web` and `apps/admin` with your actual Supabase and Stripe credentials.
 
-**apps/admin/.env.local:**
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-```
+4. Run the development server:
+   - **Windows:** Double-click `start.bat`.
+   - **Linux/macOS:** Run `chmod +x start.sh && ./start.sh`
 
-4. Set up the database:
-   - Create a new Supabase project.
-   - Run the SQL schema from `packages/database/schema.sql` in the Supabase SQL Editor.
-   - (Optional) Insert some initial products and events via the Admin UI.
-
-5. Run the development server:
-```bash
-pnpm dev
-```
 The website will be available at `http://localhost:3000` and the Admin Dashboard at `http://localhost:3000/admin`.
 
 ## Stripe Webhook Setup
