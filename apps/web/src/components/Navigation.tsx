@@ -11,7 +11,7 @@ export default function Navigation() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/shop', label: 'Shop & Tickets' },
-    { href: '/#about', label: 'Info' },
+    { href: '/club', label: 'Club' },
   ];
 
   return (

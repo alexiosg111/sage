@@ -1,41 +1,46 @@
 import Link from 'next/link';
 import { XCircle, ShoppingCart, ArrowLeft } from 'lucide-react';
+import Navigation from '@/components/Navigation';
 
 export default function CheckoutCancelPage() {
   return (
-    <main className="min-h-screen bg-zinc-950 flex items-center justify-center">
-      <div className="max-w-md w-full mx-4 text-center">
-        <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-          <XCircle className="w-10 h-10 text-red-500" />
-        </div>
-        
-        <h1 className="text-3xl font-bold mb-4">Checkout Cancelled</h1>
-        <p className="text-zinc-400 mb-8">
-          Your payment was cancelled. Don&apos;t worry, your cart items are still saved.
-        </p>
-
-        <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800 mb-8">
-          <h2 className="font-semibold mb-4">Need Help?</h2>
-          <p className="text-sm text-zinc-400">
-            If you experienced any issues during checkout, please try again or contact our support team.
+    <main className="min-h-screen">
+      <Navigation />
+      <div className="pt-40 pb-20 px-6 flex items-center justify-center">
+        <div className="max-w-xl w-full text-center">
+          <div className="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-10">
+            <XCircle className="w-12 h-12 text-red-500" />
+          </div>
+          
+          <div className="mono text-red-500 mb-4">Abbruch</div>
+          <h1 className="text-4xl md:text-6xl font-black uppercase mb-8 tracking-tighter">Zahlung abgebrochen</h1>
+          <p className="text-[#888] mb-12 text-lg">
+            Dein Bezahlvorgang wurde abgebrochen. Keine Sorge, dein Warenkorb ist noch gespeichert.
           </p>
-        </div>
-
-        <div className="space-y-3">
-          <Link
-            href="/shop/cart"
-            className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 text-zinc-950 font-semibold rounded-lg hover:bg-amber-400 transition-colors"
-          >
-            <ShoppingCart className="w-5 h-5" />
-            Return to Cart
-          </Link>
-          <Link
-            href="/shop"
-            className="flex items-center justify-center gap-2 w-full py-3 bg-zinc-800 text-white font-semibold rounded-lg hover:bg-zinc-700 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Continue Shopping
-          </Link>
+  
+          <div className="bg-[#141414] border border-[#333333] p-10 mb-12 text-left">
+            <h2 className="text-xl font-black uppercase mb-8 border-b border-[#333333] pb-4">Brauchst du Hilfe?</h2>
+            <p className="text-[#888] leading-relaxed">
+              Falls technische Probleme aufgetreten sind, versuche es bitte erneut oder kontaktiere unser Support-Team unter <span className="text-white underline">shop@sage-club.de</span>.
+            </p>
+          </div>
+  
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link
+              href="/shop/cart"
+              className="flex-1 py-5 bg-[var(--accent)] text-black font-bold uppercase hover:bg-[var(--accent-hover)] transition-all flex items-center justify-center gap-2"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              ZUM WARENKORB
+            </Link>
+            <Link
+              href="/shop"
+              className="flex-1 py-5 border border-white text-white font-bold uppercase hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              WEITER EINKAUFEN
+            </Link>
+          </div>
         </div>
       </div>
     </main>

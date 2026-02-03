@@ -128,3 +128,15 @@ CREATE POLICY "Only admins can read user roles" ON user_roles
 
 CREATE POLICY "Only admins can manage user roles" ON user_roles
   FOR ALL USING (EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+
+-- Seed Data (Optional)
+-- Insert sample products
+-- INSERT INTO products (name, slug, description, price, stock, image_url, status) VALUES
+-- ('Logo Hoodie Black', 'logo-hoodie-black', 'Heavy Cotton, Unisex. Embroidered Logo.', 65.00, 50, 'https://picsum.photos/seed/hoodie/400/300', 'active'),
+-- ('Canvas Tote Bag', 'canvas-tote-bag', '100% Organic Cotton. Print: "Sage Club Berlin".', 12.00, 100, 'https://picsum.photos/seed/tote/400/300', 'active'),
+-- ('High Fidelity Ohrstöpsel', 'earplugs', 'Protect your hearing. Clear sound filter.', 15.00, 200, 'https://picsum.photos/seed/earplugs/400/300', 'active');
+
+-- Insert sample events
+-- INSERT INTO events (name, slug, description, date, ticket_price, ticket_stock, image_url, status) VALUES
+-- ('Sage Friday Night', 'sage-friday-night', 'Lineup: Ellen Allien, Ben Klock', CURRENT_DATE + INTERVAL '7 days', 22.00, 500, 'https://picsum.photos/seed/sage1/400/300', 'published'),
+-- ('Hard Techno Bunker', 'hard-techno-bunker', 'Lineup: 999999999, I Hate Models', CURRENT_DATE + INTERVAL '14 days', 18.50, 300, 'https://picsum.photos/seed/sage2/400/300', 'published');
